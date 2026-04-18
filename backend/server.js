@@ -47,13 +47,25 @@ mongoose.connect(MONGODB_URI)
 
 // Routes
 app.get('/', (req, res) => {
-  res.send('API is running successfully!');
+  res.send('API is running');
 });
+
+// Serve static assets in production
+const frontendPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendPath));
 
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/leads', require('./routes/leadRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/activities', require('./routes/activityRoutes'));
+
+// SPA Catch-all: Redirect all non-API requests to the frontend (Fixes 404 on refresh)
+app.get('*', (req, res) => {
+  if (req.originalUrl.startsWith('/api')) {
+    return res.status(404).json({ message: 'API Route Not Found' });
+  }
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
 
 // Global Error Handler
 app.use((err, req, res, next) => {
