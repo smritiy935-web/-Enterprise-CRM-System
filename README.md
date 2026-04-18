@@ -54,7 +54,7 @@ npm install
 ```
 Create a `.env` file in the `/backend` directory:
 ```env
-PORT=5000
+PORT=5001
 MONGODB_URI=your_mongodb_uri
 JWT_SECRET=your_hyper_secure_secret
 ```

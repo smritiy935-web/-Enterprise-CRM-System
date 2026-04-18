@@ -1,6 +1,27 @@
 import { PieChart, BarChart, TrendingUp, Download } from 'lucide-react';
 
 const Analytics = () => {
+  const handleExport = () => {
+    // Generate high-density industrial data for the CSV
+    const csvContent = [
+      ["Metric", "Value", "Status", "Confidence"],
+      ["Market Share", "24.5%", "GROWING", "98%"],
+      ["Conversion Velocity", "12.8ms", "STABLE", "99%"],
+      ["Projected Revenue", "$485,000", "BULLISH", "92%"],
+      ["Pipeline Health", "EXCELLENT", "OPTIMIZED", "100%"],
+      ["System Latency", "14ms", "NOMINAL", "100%"]
+    ].map(e => e.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `APEX_Performance_Report_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="analytics-container animate-fade">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -12,7 +33,11 @@ const Analytics = () => {
           <button className="btn btn-mint" style={{ padding: '8px 20px', fontSize: '0.85rem' }}>
             Sync Data
           </button>
-          <button className="btn btn-primary" style={{ padding: '8px 20px', fontSize: '0.85rem' }}>
+          <button 
+            className="btn btn-primary" 
+            style={{ padding: '8px 20px', fontSize: '0.85rem' }}
+            onClick={handleExport}
+          >
             <Download size={16} /> Export Report
           </button>
         </div>

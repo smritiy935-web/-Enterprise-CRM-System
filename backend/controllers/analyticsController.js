@@ -71,4 +71,23 @@ const getStats = async (req, res) => {
   }
 };
 
-module.exports = { getStats };
+const getReport = async (req, res) => {
+  try {
+    const leads = await Lead.find().sort({ createdAt: -1 });
+    
+    // Simple CSV Generation
+    let csv = 'First Name,Last Name,Email,Company,Value,Status,Source,Date\n';
+    leads.forEach(lead => {
+      csv += `${lead.firstName},${lead.lastName},${lead.email},${lead.company.replace(/,/g, '')},${lead.value},${lead.status},${lead.source},${lead.createdAt.toISOString().split('T')[0]}\n`;
+    });
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=apex_leads_report.csv');
+    res.status(200).send(csv);
+  } catch (err) {
+    console.error('Report Error:', err);
+    res.status(500).json({ message: 'Error generating report' });
+  }
+};
+
+module.exports = { getStats, getReport };

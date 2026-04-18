@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../utils/api";
 
 // --- Components ---
 const Toast = ({ message, type, onDone }) => {
@@ -306,7 +307,7 @@ export default function Settings() {
             >
               {user?.avatar ? (
                 <img
-                  src={user.avatar}
+                  src={user.avatar.startsWith('http') ? user.avatar : `${API_URL}${user.avatar}`}
                   alt="avatar"
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />

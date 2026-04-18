@@ -529,7 +529,6 @@ const Dashboard = () => {
               style={{
                 background: "var(--bg-tertiary)",
                 color: "var(--text-primary)",
-                color: "var(--text-primary)",
                 justifyContent: "center",
                 padding: "12px",
                 fontSize: "0.85rem",

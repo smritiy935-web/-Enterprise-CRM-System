@@ -1,3 +1,4 @@
+// Server restart trigger: 2026-04-18
 const express = require('express');
 const dns = require('node:dns');
 dns.setServers(['8.8.8.8', '1.1.1.1']);
@@ -60,5 +61,5 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Internal Server Error' });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5081;
 server.listen(PORT, () => console.log(`🚀 System Online - Port ${PORT}`));

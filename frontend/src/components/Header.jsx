@@ -2,6 +2,7 @@ import { Bell, Search, User, LogOut, Settings, Activity, Sun, Moon } from 'lucid
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import { API_URL } from '../utils/api';
 
 import { useSearch } from '../context/SearchContext';
 
@@ -82,7 +83,7 @@ const Header = () => {
             <Search size={14} color="var(--text-secondary)" />
             <input 
               type="text" 
-              placeholder="Search Intelligence Hub (Cmd+K)..." 
+              placeholder="Search Intelligence Hub..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', marginLeft: '10px', outline: 'none', width: '100%', fontSize: '0.75rem', fontWeight: 500 }}
@@ -178,7 +179,7 @@ const Header = () => {
               </div>
               <div style={{ width: '30px', height: '30px', borderRadius: '6px', background: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '0.8rem', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
                 {user?.avatar ? (
-                  <img src={user.avatar} alt="P" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={user.avatar.startsWith('http') ? user.avatar : `${API_URL}${user.avatar}`} alt="P" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   user?.name?.charAt(0) || 'U'
                 )}

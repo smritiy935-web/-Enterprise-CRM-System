@@ -112,8 +112,8 @@ const uploadAvatar = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No image file uploaded' });
     
-    // Construct full URL path
-    const avatarUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    // Store relative path for flexibility
+    const avatarUrl = `/uploads/${req.file.filename}`;
     
     await User.findByIdAndUpdate(req.user.id, { avatar: avatarUrl });
     res.json({ avatar: avatarUrl });
