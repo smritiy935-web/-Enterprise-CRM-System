@@ -15,7 +15,8 @@ const Login = () => {
       await login(email, password);
       navigate('/');
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Login failed. Please check your credentials.';
+      console.error('Login Error details:', err);
+      const errorMessage = err.response?.data?.message || 'Login failed. Network error or server offline.';
       alert(errorMessage);
     }
   };
