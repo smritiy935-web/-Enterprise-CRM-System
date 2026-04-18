@@ -42,38 +42,90 @@ const Dashboard = () => {
          }));
       }
 
-      if (formattedData.summary.totalLeads < 4) {
-        throw new Error("Insufficient data for full dashboard; reverting to demonstration mode");
+      if (formattedData?.summary?.totalLeads < 4) {
+        // Dynamic Mock Data Override for Stats
+        const isDay = period === "day";
+        const is6m = period === "6month";
+        const isYear = period === "yearly";
+        
+        // Advanced dynamic multiplier varying per chart metric
+        const mult = isDay ? 0.1 : is6m ? 2.8 : isYear ? 6.5 : 1;
+        const curveMult = isDay ? 1 : is6m ? 1.5 : isYear ? 2.2 : 1.2;
+
+        let mockLeadsByMonth = [];
+
+        if (isDay) {
+          // Crazy jagged chart for a 24-hr period
+          mockLeadsByMonth = [
+            { _id: 1, monthName: "2am", count: 2, value: 500 },
+            { _id: 2, monthName: "6am", count: 1, value: 250 },
+            { _id: 3, monthName: "10am", count: 8, value: 12500 },
+            { _id: 4, monthName: "2pm", count: 4, value: 4800 },
+            { _id: 5, monthName: "6pm", count: 12, value: 21000 },
+            { _id: 6, monthName: "10pm", count: 3, value: 3500 },
+          ];
+        } else if (is6m) {
+          // Steady growth with a later spike
+          mockLeadsByMonth = [
+            { _id: 1, monthName: "Month 1", count: 12, value: 120000 },
+            { _id: 2, monthName: "Month 2", count: 15, value: 135000 },
+            { _id: 3, monthName: "Month 3", count: 14, value: 128000 },
+            { _id: 4, monthName: "Month 4", count: 28, value: 340000 },
+            { _id: 5, monthName: "Month 5", count: 35, value: 450000 },
+            { _id: 6, monthName: "Month 6", count: 42, value: 680000 },
+          ];
+        } else if (isYear) {
+          // Epic 12-month exponential enterprise growth curve
+          mockLeadsByMonth = [
+            { _id: 1, monthName: "Jan", count: 12, value: 85000 },
+            { _id: 2, monthName: "Feb", count: 18, value: 105000 },
+            { _id: 3, monthName: "Mar", count: 16, value: 92000 },
+            { _id: 4, monthName: "Apr", count: 25, value: 180000 },
+            { _id: 5, monthName: "May", count: 30, value: 240000 },
+            { _id: 6, monthName: "Jun", count: 45, value: 410000 },
+            { _id: 7, monthName: "Jul", count: 52, value: 520000 },
+            { _id: 8, monthName: "Aug", count: 68, value: 690000 },
+            { _id: 9, monthName: "Sep", count: 85, value: 840000 },
+            { _id: 10, monthName: "Oct", count: 110, value: 1150000 },
+            { _id: 11, monthName: "Nov", count: 145, value: 1450000 },
+            { _id: 12, monthName: "Dec", count: 180, value: 2150000 },
+          ];
+        } else {
+          // Default Monthly (Past 30 Days represented in jagged weekly chunks)
+          mockLeadsByMonth = [
+            { _id: 1, monthName: "Week 1", count: 12, value: 45000 },
+            { _id: 2, monthName: "Week 2", count: 25, value: 110000 },
+            { _id: 3, monthName: "Week 3", count: 18, value: 85000 },
+            { _id: 4, monthName: "Week 4", count: 45, value: 215000 },
+          ];
+        }
+
+        setStats({
+          summary: {
+            totalLeads: Math.floor(124 * mult),
+            closedWon: Math.floor(45 * mult),
+            winRate: isDay ? 16.6 : is6m ? 35.8 : isYear ? 25.0 : 36.3,
+            totalValue: Math.floor(485000 * mult),
+          },
+          leadsByMonth: mockLeadsByMonth,
+          leadsByStatus: [
+            { _id: "New", count: Math.floor(40 * mult) },
+            { _id: "Qualified", count: Math.floor(25 * mult) },
+            { _id: "Closed Won", count: Math.floor(20 * mult) },
+            { _id: "Closed Lost", count: Math.floor(14 * mult) },
+          ],
+        });
+      } else {
+        // Safe organic stats mapping
+        setStats(formattedData);
       }
       
-      setStats(formattedData);
+      // Activities are ALWAYS realistically populated globally
       setActivities(actRes.data.slice(0, 4));
     } catch (err) {
-      // Dynamic Mock Data
-      const isDay = period === "day";
-      const is6m = period === "6month";
-      const isYear = period === "yearly";
-
-      setStats({
-        summary: {
-          totalLeads: isDay ? 12 : is6m ? 145 : isYear ? 480 : 124,
-          closedWon: isDay ? 2 : is6m ? 52 : isYear ? 120 : 45,
-          winRate: isDay ? 16.6 : is6m ? 35.8 : isYear ? 25.0 : 36.3,
-          totalValue: isDay ? 4500 : is6m ? 98400 : isYear ? 245000 : 84200,
-        },
-        leadsByMonth: [
-          { _id: 1, count: isDay ? 2 : 12, value: isDay ? 500 : 5000 },
-          { _id: 2, count: isDay ? 5 : 18, value: isDay ? 1200 : 8000 },
-          { _id: 3, count: isDay ? 8 : 25, value: isDay ? 1800 : 12000 },
-          { _id: 4, count: isDay ? 12 : 32, value: isDay ? 2500 : 19000 },
-        ],
-        leadsByStatus: [
-          { _id: "New", count: isDay ? 5 : 40 },
-          { _id: "Qualified", count: isDay ? 3 : 25 },
-          { _id: "Closed Won", count: isDay ? 2 : 20 },
-          { _id: "Closed Lost", count: isDay ? 1 : 14 },
-        ],
-      });
+      console.error("Dashboard metrics failed to load:", err);
+      // Fallback in catastrophic failure only
+      setStats({ summary: { totalLeads: 0, closedWon: 0, winRate: 0, totalValue: 0 }, leadsByMonth: [], leadsByStatus: [] });
       setActivities([]);
     } finally {
       setLoading(false);
@@ -86,22 +138,31 @@ const Dashboard = () => {
     
     socket.on("lead_added", fetchStats);
     socket.on("lead_updated", fetchStats);
-    socket.on("activity_added", fetchStats);
+    
+    // Instant live update for Recent Activities
+    socket.on("activity_added", (newAct) => {
+      setActivities(prev => {
+        // Only keep real activities (with _id) if we are mixing with Mock Data
+        const realPrev = prev.filter(a => a._id);
+        const updated = [newAct, ...realPrev];
+        return updated.slice(0, 4);
+      });
+    });
 
     return () => {
       socket.off("lead_added", fetchStats);
       socket.off("lead_updated", fetchStats);
-      socket.off("activity_added", fetchStats);
+      socket.off("activity_added");
     };
   }, [fetchStats]);
 
   const COLORS = [
-    "#6366f1",
-    "#818cf8",
-    "#a5b4fc",
-    "#c7d2fe",
-    "#4ade80",
-    "#f87171",
+    "#06b6d4", // Cyan
+    "#3b82f6", // Blue
+    "#8b5cf6", // Purple
+    "#ec4899", // Pink
+    "#f59e0b", // Amber
+    "#10b981", // Emerald
   ];
 
   if (loading && !stats) {
@@ -329,12 +390,12 @@ const Dashboard = () => {
                 <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                   <stop
                     offset="5%"
-                    stopColor="var(--accent-primary)"
-                    stopOpacity={0.3}
+                    stopColor="#10b981"
+                    stopOpacity={0.4}
                   />
                   <stop
                     offset="95%"
-                    stopColor="var(--accent-primary)"
+                    stopColor="#10b981"
                     stopOpacity={0}
                   />
                 </linearGradient>
@@ -368,7 +429,7 @@ const Dashboard = () => {
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="var(--accent-primary)"
+                stroke="#10b981"
                 fillOpacity={1}
                 fill="url(#colorValue)"
                 strokeWidth={3}
@@ -437,7 +498,10 @@ const Dashboard = () => {
               >
                 <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
                   <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--accent-primary)" }}></div>
-                  <span style={{ fontSize: "0.85rem", color: "var(--text-primary)" }}>{activity.description.substring(0, 40)}{activity.description.length > 40 ? '...' : ''}</span>
+                  <span style={{ fontSize: "0.85rem", color: "var(--text-primary)" }}>
+                    {(activity.description || 'System action updated').substring(0, 40)}
+                    {(activity.description || '').length > 40 ? '...' : ''}
+                  </span>
                 </div>
                 <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)", whiteSpace: 'nowrap', marginLeft: '10px' }}>
                   {new Date(activity.createdAt).toLocaleDateString()}
