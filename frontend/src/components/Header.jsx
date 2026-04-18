@@ -62,7 +62,7 @@ const Header = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
         {/* Advanced Breadcrumbs */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.65rem', fontWeight: 800, letterSpacing: '1.5px' }}>
-          <span style={{ color: 'var(--text-secondary)', opacity: 0.6 }}>APEX</span>
+          <span style={{ color: 'var(--text-secondary)', opacity: 0.6 }}>APEX CRM</span>
           <span style={{ color: 'var(--text-secondary)', opacity: 0.3 }}>/</span>
           <span style={{ color: 'var(--accent-primary)', textShadow: '0 0 10px rgba(99, 102, 241, 0.3)' }}>{path}</span>
         </div>

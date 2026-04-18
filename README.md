@@ -1,11 +1,11 @@
-# 🚀 APEX CRM — Enterprise Sales Intelligence Hub
+# 🚀 Apex-CRM-Website — Enterprise Sales Intelligence Hub
 
 [![React](https://img.shields.io/badge/Frontend-React%20v18-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
 [![Node.js](https://img.shields.io/badge/Backend-Node.js%20v18-green?style=for-the-badge&logo=node.js)](https://nodejs.org/)
 [![MongoDB](https://img.shields.io/badge/Database-MongoDB-brightgreen?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
 [![Socket.io](https://img.shields.io/badge/Real--Time-Socket.io-black?style=for-the-badge&logo=socket.io)](https://socket.io/)
 
-**Apex CRM** is a high-performance, industrial-grade Sales Intelligence platform designed for enterprise-level lead management, real-time analytics, and secure team collaboration. Built with a focus on "Silent Luxury" aesthetics and high-density data visualization.
+**Apex-CRM-Website** is a high-performance, industrial-grade Sales Intelligence platform designed for enterprise-level lead management, real-time analytics, and secure team collaboration. Built with a focus on "Silent Luxury" aesthetics and high-density data visualization.
 
 ---
 

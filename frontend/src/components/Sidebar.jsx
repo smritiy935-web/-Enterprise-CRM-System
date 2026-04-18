@@ -105,7 +105,7 @@ const Sidebar = () => {
               }}
             ></div>
           </div>
-          <span style={{ fontWeight: 700 }}>APEX</span>
+          <span style={{ fontWeight: 700 }}>APEX CRM </span>
         </h2>
       </div>
 
