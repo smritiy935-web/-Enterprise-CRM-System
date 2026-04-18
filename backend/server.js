@@ -1,4 +1,4 @@
-// Server restart trigger: 2026-04-18
+// Server restart trigger: 2026-04-18 16:06:50 (Switching to Port 4000)
 const express = require('express');
 const dns = require('node:dns');
 dns.setServers(['8.8.8.8', '1.1.1.1']);
@@ -39,15 +39,28 @@ io.on('connection', (socket) => {
 
 // Database Connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/enterprise_crm';
-mongoose.connect(MONGODB_URI)
+console.log('[DB] Attempting to connect to MongoDB...');
+
+mongoose.connect(MONGODB_URI, {
+  serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+})
   .then(() => console.log('✅ MongoDB Connected Successfully'))
   .catch(err => {
     console.error('❌ MONGODB CONNECTION ERROR:', err.message);
+    console.error('[DB] Full error stack:', err.stack);
   });
 
 // Routes
 app.get('/', (req, res) => {
-  res.send('API is running');
+  res.send('API is running (Apex-CRM-Website)');
+});
+
+app.get('/api/status', (req, res) => {
+  res.json({
+    status: 'online',
+    db: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Serve static assets in production
@@ -74,4 +87,4 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5081;
-server.listen(PORT, () => console.log(`🚀 System Online - Port ${PORT}`));
+server.listen(PORT, '0.0.0.0', () => console.log(`🚀 System Online - Port ${PORT}`));
