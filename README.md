@@ -1,30 +1,39 @@
-# 🚀 Apex-CRM-Website — Enterprise Sales Intelligence Hub
+# 🚀 Apex CRM — Enterprise Sales Intelligence Hub
 
-[![React](https://img.shields.io/badge/Frontend-React%20v18-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
-[![Node.js](https://img.shields.io/badge/Backend-Node.js%20v18-green?style=for-the-badge&logo=node.js)](https://nodejs.org/)
-[![MongoDB](https://img.shields.io/badge/Database-MongoDB-brightgreen?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
-[![Socket.io](https://img.shields.io/badge/Real--Time-Socket.io-black?style=for-the-badge&logo=socket.io)](https://socket.io/)
+[![React](https://img.shields.io/badge/Frontend-React%20v18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
+[![Node.js](https://img.shields.io/badge/Backend-Node.js%20v18-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Socket.io](https://img.shields.io/badge/Real--Time-Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
+[![Vite](https://img.shields.io/badge/Build-Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 
-**Apex-CRM-Website** is a high-performance, industrial-grade Sales Intelligence platform designed for enterprise-level lead management, real-time analytics, and secure team collaboration. Built with a focus on "Silent Luxury" aesthetics and high-density data visualization.
+**Apex CRM** is a high-performance, industrial-grade Sales Intelligence platform. Designed for enterprise scalability, it streamlines lead management, optimizes team productivity with real-time analytics, and ensures uncompromising security through advanced RBAC protocols.
+
+---
+
+## 💎 The "Silent Luxury" Design Philosophy
+Apex CRM isn't just a tool; it's a workspace. Built with a focus on **high-density data visualization** and **premium aesthetics**:
+- **Midnight Obsidian Theme**: A sleek, dark interface minimized for eye comfort during long sessions.
+- **Glassmorphic Components**: Layered depth using modern CSS backdrop filters.
+- **Vibrant Accents**: "Cyber Sunset" (Pink/Orange) and "Emerald Neon" (Green) for intuitive status indicators.
 
 ---
 
 ## ✨ Key Features
 
-### 📊 Industrial Dashboard
-- **Hybrid Demonstration Mode**: Automatically scales data for high-impact visual presentations when live data is sparse.
-- **Dynamic Real-time Analytics**: Live revenue tracking and lead ingestion via WebSocket synchronization.
-- **Visual Excellence**: Glassmorphic UI with vibrant "Cyber Sunset" and "Emerald Neon" color palettes.
+### 📊 Industrial Intelligence Dashboard
+- **Hybrid Data Scaling**: Intelligent visualization that scales seamlessly from empty states to millions of data points.
+- **Live Revenue Tracking**: Real-time sales pipeline monitoring via high-speed WebSocket synchronization.
+- **Predictive Analytics**: Integrated charting for trend analysis and volume forecasting.
 
-### 🎯 Leads & Pipeline Management
-- **High-Density Leads Hub**: Advanced repository for managing thousands of prospects with zero latency.
-- **Engagement Engine**: Integrated logging for Calls, Messages, and Meetings with automated activity feeds.
-- **AI-Powered Scoring**: Preparations for intelligent lead prioritization based on behavior metrics.
+### 🎯 Precision Leads Hub
+- **Zero-Latency Repository**: Advanced state management for handling massive lead quantities with instant search/filter.
+- **Engagement Timeline**: Automated logging for Calls, Messages, and Meetings in a unified activity stream.
+- **Smart Prioritization**: Behavior-based metrics to identify high-intent prospects.
 
-### 🔐 Enterprise Security
-- **Security Protocols Hub**: Advanced credential management with real-time password strength entropy calculation.
-- **Industrial Notification Engine**: Fine-grained control over real-time lead alerts and system status pings.
-- **RBAC**: Multi-tier Role-Based Access Control (Admin, Manager, Strategic Member).
+### 🔐 Enterprise-Grade Security
+- **RBAC (Role-Based Access Control)**: Granular permissions for Admins, Managers, and Sales Representatives.
+- **Security Command Center**: Real-time monitoring of password entropy and credential strength.
+- **Industrial Alerts**: Fine-grained notification engine for critical system updates and lead pings.
 
 ---
 
@@ -32,80 +41,80 @@
 
 | Layer | Technologies |
 | :--- | :--- |
-| **Core** | React 18, Node.js, Express, MongoDB |
-| **Styling** | Vanilla CSS (Modern CSS Variables), Glassmorphism |
-| **Real-time** | Socket.io (Bi-directional communication) |
-| **Visualization** | Recharts (Responsive Area & Bar Charts) |
-| **Icons** | Lucide React (Premium stroke icons) |
-| **Animation** | CSS Keyframes & Framer Motion |
+| **Core Runtime** | React 18 (Frontend), Node.js (Backend) |
+| **Data Engine** | MongoDB (NoSQL) with Mongoose ODM |
+| **Real-time Engine** | Socket.io (Bi-directional communication) |
+| **Architecture** | Express.js RESTful API & WebSocket integration |
+| **Visualization** | Recharts (Responsive Analytics) |
+| **Styling** | Modern Vanilla CSS, CSS Variables, Framer Motion |
+| **Build Tool** | Vite (Ultra-fast development environment) |
 
 ---
 
 ## 🚀 Quick Start
 
 ### 1. Prerequisites
-- **Node.js**: v18.0.0 or higher
-- **MongoDB**: Local instance or MongoDB Atlas URI
+- **Node.js**: `v18.x` or higher
+- **MongoDB**: Active instance (Local or Atlas)
+- **Git**: For version control
 
-### 2. Backend Installation
+### 2. Backend Setup
 ```bash
 cd backend
 npm install
 ```
-Create a `.env` file in the `/backend` directory:
+Create a `.env` file in the `backend/` directory:
 ```env
-PORT=5001
-MONGODB_URI=your_mongodb_uri
-JWT_SECRET=your_hyper_secure_secret
+PORT=5081
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_secret_key
 ```
-Run the server:
+Start the development server:
 ```bash
 npm run dev
 ```
 
-### 3. Frontend Installation
+### 3. Frontend Setup
 ```bash
 cd frontend
 npm install
 ```
-Run the client:
+Start the Vite development server:
 ```bash
 npm run dev
 ```
 
 ---
 
-## 📂 Architecture Overview
+## 📂 Project Architecture
 
 ```text
 ├── backend/
-│   ├── controllers/      # Business logic handlers
+│   ├── controllers/      # Core business logic
 │   ├── models/           # Mongoose schemas (Leads, Users, Activities)
-│   ├── routes/           # RESTful API endpoints
-│   └── middleware/       # JWT Auth & RBAC guards
+│   ├── routes/           # REST API Definitions
+│   └── middleware/       # JWT Auth & Security Guards
 └── frontend/
     ├── src/
-    │   ├── components/   # Reusable UI modules (Sidebar, TeamChat)
-    │   ├── pages/        # High-order components (Dashboard, Settings)
-    │   ├── context/      # Global Authentication & System state
-    │   └── utils/        # API configurations & Helpers
+    │   ├── components/   # Atomic UI Modules
+    │   ├── pages/        # Dashboard, Leads Hub, Settings
+    │   ├── context/      # Auth & Global System State
+    │   └── utils/        # API Configuration & Helpers
 ```
 
 ---
 
-## 🛡 Security Credentials (Dev Environment)
+## 🛡 Default Development Credentials
 
 | Role | Email | Password |
 | :--- | :--- | :--- |
-| **Admin** | `admin@apex.com` | `admin123` |
+| **System Admin** | `admin@apex.com` | `admin123` |
 
 ---
 
-## 🎨 UI Aesthetics
-- **Core Theme**: "Midnight Obsidian" (Pitch Black variants available)
-- **Accents**: Cyberpunk Pink, Electric Indigo, and Safety Amber.
-- **Design Philosophy**: High Information Density without visual clutter.
+## 👩‍💻 Developed By
+**Smriti Yadav**  
+*MERN Stack Developer*
 
 ---
-
-Built with ❤️ by the **Apex Intelligence Team**.
+© 2026 Apex CRM. All Rights Reserved.
