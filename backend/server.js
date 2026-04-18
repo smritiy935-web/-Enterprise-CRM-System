@@ -45,6 +45,10 @@ mongoose.connect(MONGODB_URI)
   });
 
 // Routes
+app.get('/', (req, res) => {
+  res.send('API is running successfully!');
+});
+
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/leads', require('./routes/leadRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));

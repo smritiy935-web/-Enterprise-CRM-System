@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import api, { API_URL } from '../utils/api';
 import { Mail, Phone, Calendar, StickyNote, User, AlertCircle } from 'lucide-react';
+import { io } from 'socket.io-client';
 
-const socket = window.io
-  ? window.io(API_URL)
-  : { on: () => {}, emit: () => {}, off: () => {} };
+const socket = io(API_URL);
 
 const Activities = () => {
   const [activities, setActivities] = useState([]);

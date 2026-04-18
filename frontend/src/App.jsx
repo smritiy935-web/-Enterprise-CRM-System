@@ -10,6 +10,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
+import Meeting from './pages/Meeting';
 
 const PrivateRoute = ({ children }) => {
   const { user } = useAuth();
@@ -33,6 +34,7 @@ function AppContent() {
             <Route path="/activities" element={<PrivateRoute><Activities /></PrivateRoute>} />
             <Route path="/analytics" element={<PrivateRoute><Analytics /></PrivateRoute>} />
             <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
+            <Route path="/meetings" element={<PrivateRoute><Meeting /></PrivateRoute>} />
           </Routes>
         </main>
       </div>

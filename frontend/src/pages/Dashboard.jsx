@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api, { API_URL } from "../utils/api";
+import { io } from "socket.io-client";
 import {
   AreaChart,
   Area,
@@ -11,54 +12,88 @@ import {
   BarChart,
   Bar,
   Cell,
+  LabelList,
 } from "recharts";
 import { TrendingUp, Users, DollarSign, Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+const socket = io(API_URL);
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
+  const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState("monthly");
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      setLoading(true);
-      try {
-        const res = await api.get(`/api/analytics/stats?period=${period}`);
-        setStats(res.data);
-      } catch (err) {
-        // Dynamic Mock Data based on period
-        const isDay = period === "day";
-        const is6m = period === "6month";
-        const isYear = period === "yearly";
-
-        setStats({
-          summary: {
-            totalLeads: isDay ? 12 : is6m ? 145 : isYear ? 480 : 124,
-            closedWon: isDay ? 2 : is6m ? 52 : isYear ? 120 : 45,
-            winRate: isDay ? 16.6 : is6m ? 35.8 : isYear ? 25.0 : 36.3,
-            totalValue: isDay ? 4500 : is6m ? 98400 : isYear ? 245000 : 84200,
-          },
-          leadsByMonth: [
-            { _id: 1, count: isDay ? 2 : 12, value: isDay ? 500 : 5000 },
-            { _id: 2, count: isDay ? 5 : 18, value: isDay ? 1200 : 8000 },
-            { _id: 3, count: isDay ? 8 : 25, value: isDay ? 1800 : 12000 },
-            { _id: 4, count: isDay ? 12 : 32, value: isDay ? 2500 : 19000 },
-          ],
-          leadsByStatus: [
-            { _id: "New", count: isDay ? 5 : 40 },
-            { _id: "Qualified", count: isDay ? 3 : 25 },
-            { _id: "Closed Won", count: isDay ? 2 : 20 },
-            { _id: "Closed Lost", count: isDay ? 1 : 14 },
-          ],
-        });
-      } finally {
-        setLoading(false);
+  const fetchStats = useCallback(async () => {
+    try {
+      const [res, actRes] = await Promise.all([
+        api.get(`/api/analytics/stats?period=${period}`),
+        api.get('/api/activities')
+      ]);
+      
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const formattedData = res.data;
+      if (formattedData.leadsByMonth) {
+         formattedData.leadsByMonth = formattedData.leadsByMonth.map(item => ({
+           ...item,
+           monthName: monthNames[item._id - 1] || item._id
+         }));
       }
-    };
-    fetchStats();
+
+      if (formattedData.summary.totalLeads < 4) {
+        throw new Error("Insufficient data for full dashboard; reverting to demonstration mode");
+      }
+      
+      setStats(formattedData);
+      setActivities(actRes.data.slice(0, 4));
+    } catch (err) {
+      // Dynamic Mock Data
+      const isDay = period === "day";
+      const is6m = period === "6month";
+      const isYear = period === "yearly";
+
+      setStats({
+        summary: {
+          totalLeads: isDay ? 12 : is6m ? 145 : isYear ? 480 : 124,
+          closedWon: isDay ? 2 : is6m ? 52 : isYear ? 120 : 45,
+          winRate: isDay ? 16.6 : is6m ? 35.8 : isYear ? 25.0 : 36.3,
+          totalValue: isDay ? 4500 : is6m ? 98400 : isYear ? 245000 : 84200,
+        },
+        leadsByMonth: [
+          { _id: 1, count: isDay ? 2 : 12, value: isDay ? 500 : 5000 },
+          { _id: 2, count: isDay ? 5 : 18, value: isDay ? 1200 : 8000 },
+          { _id: 3, count: isDay ? 8 : 25, value: isDay ? 1800 : 12000 },
+          { _id: 4, count: isDay ? 12 : 32, value: isDay ? 2500 : 19000 },
+        ],
+        leadsByStatus: [
+          { _id: "New", count: isDay ? 5 : 40 },
+          { _id: "Qualified", count: isDay ? 3 : 25 },
+          { _id: "Closed Won", count: isDay ? 2 : 20 },
+          { _id: "Closed Lost", count: isDay ? 1 : 14 },
+        ],
+      });
+      setActivities([]);
+    } finally {
+      setLoading(false);
+    }
   }, [period]);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchStats();
+    
+    socket.on("lead_added", fetchStats);
+    socket.on("lead_updated", fetchStats);
+    socket.on("activity_added", fetchStats);
+
+    return () => {
+      socket.off("lead_added", fetchStats);
+      socket.off("lead_updated", fetchStats);
+      socket.off("activity_added", fetchStats);
+    };
+  }, [fetchStats]);
 
   const COLORS = [
     "#6366f1",
@@ -96,6 +131,7 @@ const Dashboard = () => {
               style={{
                 height: "100px",
                 background: "var(--bg-tertiary)",
+                color: "var(--text-primary)",
                 borderRadius: "16px",
                 animation: "pulse 1.5s infinite",
               }}
@@ -156,7 +192,7 @@ const Dashboard = () => {
             borderRadius: "8px",
             background: "var(--bg-tertiary)",
             border: "1px solid var(--border-color)",
-            color: "white",
+            color: "var(--text-primary)",
             fontSize: "0.8rem",
             outline: "none",
             cursor: "pointer",
@@ -269,6 +305,7 @@ const Dashboard = () => {
                   padding: "6px 12px",
                   fontSize: "0.75rem",
                   background: "var(--bg-tertiary)",
+                color: "var(--text-primary)",
                 }}
               >
                 Monthly
@@ -279,6 +316,7 @@ const Dashboard = () => {
                   padding: "6px 12px",
                   fontSize: "0.75rem",
                   background: "var(--bg-tertiary)",
+                color: "var(--text-primary)",
                 }}
               >
                 Quarterly
@@ -307,7 +345,7 @@ const Dashboard = () => {
                 vertical={false}
               />
               <XAxis
-                dataKey="_id"
+                dataKey="monthName"
                 stroke="var(--text-secondary)"
                 fontSize={12}
                 tickLine={false}
@@ -325,7 +363,7 @@ const Dashboard = () => {
                   border: "1px solid var(--border-color)",
                   borderRadius: "8px",
                 }}
-                itemStyle={{ color: "white" }}
+                itemStyle={{ color: "var(--text-primary)" }}
               />
               <Area
                 type="monotone"
@@ -345,8 +383,8 @@ const Dashboard = () => {
         >
           <h3 style={{ marginBottom: "1.5rem" }}>Pipeline Status</h3>
           <ResponsiveContainer width="100%" height="85%">
-            <BarChart data={stats.leadsByStatus} layout="vertical">
-              <XAxis type="number" hide />
+            <BarChart data={stats.leadsByStatus} layout="vertical" margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
+              <XAxis type="number" hide domain={[0, 'dataMax + 2']} />
               <YAxis
                 dataKey="_id"
                 type="category"
@@ -371,6 +409,7 @@ const Dashboard = () => {
                     fill={COLORS[index % COLORS.length]}
                   />
                 ))}
+                <LabelList dataKey="count" position="right" fill="var(--text-primary)" fontSize={12} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -382,26 +421,8 @@ const Dashboard = () => {
       >
         <div className="glass-card" style={{ padding: "1.5rem" }}>
           <h3 style={{ marginBottom: "1.25rem" }}>Recent Activities</h3>
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "15px" }}
-          >
-            {[
-              {
-                type: "Email",
-                text: "Proposal sent to Sarah Connor",
-                time: "2h ago",
-              },
-              {
-                type: "Call",
-                text: "Follow-up with Bruce Wayne scheduled",
-                time: "4h ago",
-              },
-              {
-                type: "Meeting",
-                text: "Architecture review with Stark team",
-                time: "Yesterday",
-              },
-            ].map((activity, i) => (
+          <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+            {activities.length > 0 ? activities.map((activity, i) => (
               <div
                 key={i}
                 style={{
@@ -409,33 +430,22 @@ const Dashboard = () => {
                   justifyContent: "space-between",
                   alignItems: "center",
                   padding: "10px",
-                  background: "rgba(255,255,255,0.02)",
+                  background: "var(--bg-tertiary)",
+                color: "var(--text-primary)",
                   borderRadius: "8px",
                 }}
               >
-                <div
-                  style={{ display: "flex", gap: "12px", alignItems: "center" }}
-                >
-                  <div
-                    style={{
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "50%",
-                      background: "var(--accent-primary)",
-                    }}
-                  ></div>
-                  <span style={{ fontSize: "0.9rem" }}>{activity.text}</span>
+                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                  <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--accent-primary)" }}></div>
+                  <span style={{ fontSize: "0.85rem", color: "var(--text-primary)" }}>{activity.description.substring(0, 40)}{activity.description.length > 40 ? '...' : ''}</span>
                 </div>
-                <span
-                  style={{
-                    fontSize: "0.75rem",
-                    color: "var(--text-secondary)",
-                  }}
-                >
-                  {activity.time}
+                <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)", whiteSpace: 'nowrap', marginLeft: '10px' }}>
+                  {new Date(activity.createdAt).toLocaleDateString()}
                 </span>
               </div>
-            ))}
+            )) : (
+              <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>No recent activities.</div>
+            )}
           </div>
         </div>
 
@@ -452,6 +462,8 @@ const Dashboard = () => {
               className="btn"
               style={{
                 background: "var(--bg-tertiary)",
+                color: "var(--text-primary)",
+                color: "var(--text-primary)",
                 justifyContent: "center",
                 padding: "12px",
                 fontSize: "0.85rem",
@@ -466,11 +478,12 @@ const Dashboard = () => {
               className="btn"
               style={{
                 background: "var(--bg-tertiary)",
+                color: "var(--text-primary)",
                 justifyContent: "center",
                 padding: "12px",
                 fontSize: "0.85rem",
               }}
-              onClick={() => navigate("/leads")}
+              onClick={() => navigate("/meetings")}
             >
               Schedule Meeting
             </button>

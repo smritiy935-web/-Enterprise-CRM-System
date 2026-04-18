@@ -229,7 +229,7 @@ export default function Settings() {
       <div style={cardStyle}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1.25rem" }}>
           <Bell size={16} color="#10b981" />
-          <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>NOTIFICATION ENGINE</span>
+          <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>NOTIFICATION</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {[{ key: "newLeads", label: "Real-time Lead Ingestion Alerts" }, { key: "dealStatus", label: "Pipeline Status Sync Notifications" }, { key: "weeklyReport", label: "Industrial Performance Audit" }].map(({ key, label }) => (
@@ -253,7 +253,7 @@ export default function Settings() {
             <p style={{ fontWeight: 700, fontSize: '0.85rem', marginBottom: 5 }}>Terminate Master Account</p>
             <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>Warning: This action is permanent. All industrial intelligence and records will be purged.</p>
           </div>
-          <button className="btn" style={{ background: "rgba(239,68,68,0.05)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", fontSize: '0.75rem' }} onClick={() => setShowDeleteConfirm(true)}>Deactivate Cluster</button>
+          <button className="btn" style={{ background: "rgba(239,68,68,0.05)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", fontSize: '0.75rem' }} onClick={() => setShowDeleteConfirm(true)}>Deactivate Account</button>
         </div>
       </div>
 

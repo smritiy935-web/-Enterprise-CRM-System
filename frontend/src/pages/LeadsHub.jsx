@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import api, { API_URL } from "../utils/api";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Plus,
   Filter,
@@ -13,10 +13,10 @@ import {
   X
 } from "lucide-react";
 
+import { io } from "socket.io-client";
+
 // --- Socket Sync ---
-const socket = window.io
-  ? window.io(API_URL)
-  : { on: () => {}, emit: () => {}, off: () => {} };
+const socket = io(API_URL);
 
 // --- Theme Config ---
 const STATUS_COLORS = {
@@ -54,6 +54,7 @@ import { useSearch } from "../context/SearchContext";
 
 export default function LeadsHub() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { searchTerm } = useSearch();
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -139,10 +140,9 @@ export default function LeadsHub() {
 
   const handleLogActivity = async (leadId, type, description) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/activities", {
+      await api.post("/api/activities", {
         leadId, type, description, status: "Completed"
-      }, { headers: { Authorization: `Bearer ${token}` } });
+      });
     } catch (err) { }
   };
 
@@ -226,6 +226,7 @@ export default function LeadsHub() {
                 <div style={{ display: "flex", gap: 6, marginTop: "1rem", paddingTop: "0.8rem", borderTop: "1px solid var(--border-color)" }}>
                   <button className="btn" style={{ padding: "6px", background: "rgba(99,102,241,0.05)", color: "#6366f1", border: "none" }} onClick={() => setActiveCall(lead)}><Phone size={14} /></button>
                   <button className="btn" style={{ padding: "6px", background: "rgba(16,185,129,0.05)", color: "#10b981", border: "none" }} onClick={() => setActiveMessage(lead)}><Mail size={14} /></button>
+                  <button className="btn" style={{ padding: "6px", background: "rgba(245,158,11,0.05)", color: "#f59e0b", border: "none" }} onClick={() => navigate('/meetings', { state: { lead } })}><Calendar size={14} /></button>
                   <button className="btn" style={{ padding: "6px", background: "rgba(239,68,68,0.05)", color: "#ef4444", border: "none", marginLeft: "auto" }} onClick={() => handleDeleteLead(lead._id)}><Trash2 size={14} /></button>
                 </div>
               </div>
