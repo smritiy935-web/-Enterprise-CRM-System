@@ -116,3 +116,14 @@ h1, h2, h3, h4 {
 .animate-fade {
   animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
+
+/* Responsive Utilities */
+.hide-mobile {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .md-block {
+    display: block !important;
+  }
+}

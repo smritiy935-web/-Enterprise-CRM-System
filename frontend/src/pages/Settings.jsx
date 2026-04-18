@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { User, Lock, Bell, Trash2, Save, AlertTriangle, Upload } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -89,9 +89,8 @@ export default function Settings() {
     form.append('avatar', file);
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.post('http://localhost:5000/api/auth/avatar', form, {
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+      const res = await api.post('/api/auth/avatar', form, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
       updateAvatarState(res.data.avatar);
       showToast("Profile identity updated successfully!");
@@ -120,10 +119,8 @@ export default function Settings() {
 
     setChangingPass(true);
     try {
-      const token = localStorage.getItem('token');
-      await axios.put('http://localhost:5000/api/auth/change-password', 
-        { oldPassword: passwordData.oldPassword, newPassword: passwordData.newPassword },
-        { headers: { Authorization: `Bearer ${token}` } }
+      await api.put('/api/auth/change-password', 
+        { oldPassword: passwordData.oldPassword, newPassword: passwordData.newPassword }
       );
       showToast("Security credentials updated.");
       setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
@@ -136,8 +133,7 @@ export default function Settings() {
 
   const handleDeleteAccount = async () => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete('http://localhost:5000/api/auth/delete-account', { headers: { Authorization: `Bearer ${token}` } });
+      await api.delete('/api/auth/delete-account');
       logout();
       navigate('/login');
     } catch (err) {

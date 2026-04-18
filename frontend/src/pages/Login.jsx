@@ -15,7 +15,8 @@ const Login = () => {
       await login(email, password);
       navigate('/');
     } catch (err) {
-      alert('Login failed');
+      const errorMessage = err.response?.data?.message || 'Login failed. Please check your credentials.';
+      alert(errorMessage);
     }
   };
 

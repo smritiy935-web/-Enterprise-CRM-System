@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+import api, { API_URL } from "../utils/api";
 import { useLocation } from "react-router-dom";
 import {
   Plus,
@@ -9,12 +9,13 @@ import {
   Building2,
   Trash2,
   Download,
-  Calendar
+  Calendar,
+  X
 } from "lucide-react";
 
 // --- Socket Sync ---
 const socket = window.io
-  ? window.io("http://localhost:5000")
+  ? window.io(API_URL)
   : { on: () => {}, emit: () => {}, off: () => {} };
 
 // --- Theme Config ---
@@ -51,15 +52,12 @@ const Toast = ({ message, type, onDone }) => {
 
 import { useSearch } from "../context/SearchContext";
 
-// ... (Socket and STATUS_COLORS same)
-
 export default function LeadsHub() {
   const location = useLocation();
   const { searchTerm } = useSearch();
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Existing filtering logic
   const filteredLeads = leads.filter(l => {
     const term = searchTerm.toLowerCase();
     return (
@@ -82,10 +80,7 @@ export default function LeadsHub() {
   // --- Real Backend Synchronization ---
   const fetchLeads = useCallback(async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/leads", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get("/api/leads");
       setLeads(res.data || []);
     } catch (err) { setLeads([]); }
     finally { setLoading(false); }
@@ -126,10 +121,7 @@ export default function LeadsHub() {
     };
 
     try {
-      const token = localStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/leads", leadData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.post("/api/leads", leadData);
       setShowModal(false);
       showToast(`Lead "${leadData.firstName}" deployed.`);
       fetchLeads();
@@ -139,10 +131,7 @@ export default function LeadsHub() {
   const handleDeleteLead = async (id) => {
     if (!window.confirm("Terminate this lead?")) return;
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/leads/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete(`/api/leads/${id}`);
       showToast("Target removed.");
       fetchLeads();
     } catch (err) { showToast("Delete failed", "error"); }
@@ -197,40 +186,53 @@ export default function LeadsHub() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
-        {filteredLeads.map((lead) => {
-          const sc = getStatusStyle(lead.status);
-          return (
-            <div key={lead._id} className="glass-card" style={{ padding: "1.1rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.8rem" }}>
-                <span style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 900, background: sc.bg, color: sc.color }}>{lead.status.toUpperCase()}</span>
-                <span style={{ fontSize: 11, fontWeight: 900, color: lead.aiScore > 70 ? "#059669" : "#d97706" }}>AI {lead.aiScore}%</span>
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "0.8rem" }}>
-                <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(99,102,241,0.1)", color: "#6366f1", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 12 }}>
-                  {initials(lead.firstName, lead.lastName)}
+      {filteredLeads.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "6rem 2rem", background: "rgba(255,255,255,0.01)", borderRadius: 16, border: "1px dashed var(--border-color)" }}>
+          <div style={{ width: 64, height: 64, margin: "0 auto 1rem", background: "rgba(99,102,241,0.1)", color: "#6366f1", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Building2 size={32} />
+          </div>
+          <h3 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: "0.5rem" }}>No Leads in Pipeline</h3>
+          <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", marginBottom: "1.5rem" }}>Your intelligence repository is empty. Add a lead manually or run the seed script to populate.</p>
+          <button className="btn btn-primary" style={{ padding: "10px 20px" }} onClick={() => setShowModal(true)}>
+            <Plus size={16} /> FIRST LEAD DEPLOYMENT
+          </button>
+        </div>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+          {filteredLeads.map((lead) => {
+            const sc = getStatusStyle(lead.status);
+            return (
+              <div key={lead._id} className="glass-card" style={{ padding: "1.1rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.8rem" }}>
+                  <span style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 900, background: sc.bg, color: sc.color }}>{lead.status.toUpperCase()}</span>
+                  <span style={{ fontSize: 11, fontWeight: 900, color: lead.aiScore > 70 ? "#059669" : "#d97706" }}>AI {lead.aiScore}%</span>
                 </div>
-                <div>
-                  <h3 style={{ fontWeight: 700, fontSize: "0.9rem" }}>{lead.firstName} {lead.lastName}</h3>
-                  <p style={{ color: "var(--accent-primary)", fontWeight: 900, fontSize: "0.95rem" }}>${lead.value?.toLocaleString() || 0}</p>
+
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "0.8rem" }}>
+                  <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(99,102,241,0.1)", color: "#6366f1", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 12 }}>
+                    {initials(lead.firstName, lead.lastName)}
+                  </div>
+                  <div>
+                    <h3 style={{ fontWeight: 700, fontSize: "0.9rem" }}>{lead.firstName} {lead.lastName}</h3>
+                    <p style={{ color: "var(--accent-primary)", fontWeight: 900, fontSize: "0.95rem" }}>${lead.value?.toLocaleString() || 0}</p>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 5, fontSize: 12, color: "var(--text-secondary)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}><Building2 size={13} /> {lead.company}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}><Mail size={13} /> {lead.email}</div>
+                </div>
+
+                <div style={{ display: "flex", gap: 6, marginTop: "1rem", paddingTop: "0.8rem", borderTop: "1px solid var(--border-color)" }}>
+                  <button className="btn" style={{ padding: "6px", background: "rgba(99,102,241,0.05)", color: "#6366f1", border: "none" }} onClick={() => setActiveCall(lead)}><Phone size={14} /></button>
+                  <button className="btn" style={{ padding: "6px", background: "rgba(16,185,129,0.05)", color: "#10b981", border: "none" }} onClick={() => setActiveMessage(lead)}><Mail size={14} /></button>
+                  <button className="btn" style={{ padding: "6px", background: "rgba(239,68,68,0.05)", color: "#ef4444", border: "none", marginLeft: "auto" }} onClick={() => handleDeleteLead(lead._id)}><Trash2 size={14} /></button>
                 </div>
               </div>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: 5, fontSize: 12, color: "var(--text-secondary)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}><Building2 size={13} /> {lead.company}</div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}><Mail size={13} /> {lead.email}</div>
-              </div>
-
-              <div style={{ display: "flex", gap: 6, marginTop: "1rem", paddingTop: "0.8rem", borderTop: "1px solid var(--border-color)" }}>
-                <button className="btn" style={{ padding: "6px", background: "rgba(99,102,241,0.05)", color: "#6366f1", border: "none" }} onClick={() => setActiveCall(lead)}><Phone size={14} /></button>
-                <button className="btn" style={{ padding: "6px", background: "rgba(16,185,129,0.05)", color: "#10b981", border: "none" }} onClick={() => setActiveMessage(lead)}><Mail size={14} /></button>
-                <button className="btn" style={{ padding: "6px", background: "rgba(239,68,68,0.05)", color: "#ef4444", border: "none", marginLeft: "auto" }} onClick={() => handleDeleteLead(lead._id)}><Trash2 size={14} /></button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* ── Call Modal ── */}
       {activeCall && (

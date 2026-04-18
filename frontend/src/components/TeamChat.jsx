@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Send, X, MessageSquare, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../utils/api';
 
-const socket = window.io ? window.io('http://localhost:5000') : { on: () => {}, emit: () => {}, off: () => {} };
+const socket = window.io ? window.io(API_URL) : { on: () => {}, emit: () => {}, off: () => {} };
 
 const TeamChat = () => {
   const [isOpen, setIsOpen] = useState(false);

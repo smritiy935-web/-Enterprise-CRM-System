@@ -38,6 +38,6 @@ A premium, full-stack CRM system built for high-performance sales management.
 - `/backend`: API services, Models, and Auth controllers.
 - `/frontend`: React client with modular components and shared state.
 
-pasord and username
+Admin Login Details
 Email: master@admin.com
-Password: supersecret123"# -Enterprise-CRM-System" 
+Password: supersecret123

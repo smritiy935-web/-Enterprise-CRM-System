@@ -74,7 +74,7 @@ const Header = () => {
               onClick={() => setShowDropdown(!showDropdown)}
               style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '2px 5px', borderRadius: '6px', background: showDropdown ? 'rgba(255,255,255,0.05)' : 'transparent' }}
             >
-              <div style={{ textAlign: 'right', display: 'none', display: 'md-block' }}>
+              <div className="hide-mobile md-block" style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'white' }}>{user?.name?.split(' ')[0] || 'User'}</div>
                 <div style={{ fontSize: '0.6rem', color: '#94a3b8' }}>{user?.role || 'REP'}</div>
               </div>

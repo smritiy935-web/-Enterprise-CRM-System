@@ -14,7 +14,8 @@ const Register = () => {
       await register(formData);
       navigate('/');
     } catch (err) {
-      alert('Registration failed');
+      const errorMessage = err.response?.data?.message || 'Registration failed. Please check your data or try again later.';
+      alert(errorMessage);
     }
   };
 

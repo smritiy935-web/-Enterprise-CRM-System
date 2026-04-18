@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api, { API_URL } from '../utils/api';
 import { Mail, Phone, Calendar, StickyNote, User, AlertCircle } from 'lucide-react';
 
 const socket = window.io
-  ? window.io("http://localhost:5000")
+  ? window.io(API_URL)
   : { on: () => {}, emit: () => {}, off: () => {} };
 
 const Activities = () => {
@@ -18,16 +18,7 @@ const Activities = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setError("No authentication token found.");
-          setLoading(false);
-          return;
-        }
-
-        const res = await axios.get('http://localhost:5000/api/activities', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await api.get('/api/activities');
         setActivities(res.data);
       } catch (err) {
         console.error('Error fetching activities:', err);

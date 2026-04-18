@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api, { API_URL } from "../utils/api";
 import {
   AreaChart,
   Area,
@@ -25,9 +25,7 @@ const Dashboard = () => {
     const fetchStats = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/analytics/stats?period=${period}`,
-        );
+        const res = await api.get(`/api/analytics/stats?period=${period}`);
         setStats(res.data);
       } catch (err) {
         // Dynamic Mock Data based on period
@@ -486,7 +484,7 @@ const Dashboard = () => {
               }}
               onClick={() =>
                 window.open(
-                  "http://localhost:5000/api/analytics/report",
+                  `${API_URL}/api/analytics/report`,
                   "_blank",
                 )
               }
