@@ -10,7 +10,12 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      let userData = JSON.parse(storedUser);
+      // Modernize legacy Master Admin name if encountered
+      if (userData.name === 'Master Admin') {
+        userData.name = 'Smriti Yadav';
+      }
+      setUser(userData);
     }
     setLoading(false);
   }, []);
@@ -18,6 +23,10 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const res = await api.post('/api/auth/login', { email, password });
     const { token, user: userData } = res.data;
+    // Transform legacy names for UI consistency
+    if (userData.name === 'Master Admin') {
+      userData.name = 'Smriti Yadav';
+    }
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
@@ -27,6 +36,10 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     const res = await api.post('/api/auth/register', userData);
     const { token, user: newUser } = res.data;
+    // Transform legacy names for UI consistency
+    if (newUser.name === 'Master Admin') {
+      newUser.name = 'Smriti Yadav';
+    }
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(newUser));
     setUser(newUser);

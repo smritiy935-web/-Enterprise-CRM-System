@@ -33,7 +33,6 @@ const Sidebar = () => {
           path: "/activities",
           icon: <MessageSquare size={20} />,
         },
-        { title: "Meetings", path: "/meetings", icon: <Calendar size={20} /> },
         {
           title: "Sales Analytics",
           path: "/analytics",
@@ -217,10 +216,10 @@ const Sidebar = () => {
           </div>
           <div>
             <p style={{ fontSize: "0.8rem", fontWeight: 600 }}>
-              {user?.name || "Admin User"}
+              {user?.name || "User"}
             </p>
             <p style={{ fontSize: "0.65rem", color: "var(--text-secondary)" }}>
-              {user?.role || "System Admin"}
+              {user?.role || "Admin"}
             </p>
           </div>
         </div>

@@ -355,10 +355,10 @@ export default function Settings() {
             }}
           >
             <div>
-              <label style={labelStyle}>Full Name</label>
               <input
                 type="text"
                 style={inputStyle}
+                placeholder="Full Name"
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
@@ -366,10 +366,10 @@ export default function Settings() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Email Address</label>
               <input
                 type="email"
                 style={inputStyle}
+                placeholder="Email Address"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
@@ -377,10 +377,10 @@ export default function Settings() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Role / Title</label>
               <input
                 type="text"
                 style={inputStyle}
+                placeholder="Role / Title"
                 value={formData.role}
                 onChange={(e) =>
                   setFormData({ ...formData, role: e.target.value })
@@ -388,10 +388,10 @@ export default function Settings() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Secure Phone</label>
               <input
                 type="text"
                 style={inputStyle}
+                placeholder="Secure Phone"
                 value={formData.phone}
                 onChange={(e) =>
                   setFormData({ ...formData, phone: e.target.value })
@@ -437,11 +437,10 @@ export default function Settings() {
             }}
           >
             <div>
-              <label style={labelStyle}>Current Password</label>
               <input
                 type="password"
                 style={inputStyle}
-                placeholder="••••••••"
+                placeholder="Current Password"
                 value={passwordData.oldPassword}
                 onChange={(e) =>
                   setPasswordData({
@@ -452,11 +451,10 @@ export default function Settings() {
               />
             </div>
             <div>
-              <label style={labelStyle}>New Password</label>
               <input
                 type="password"
                 style={inputStyle}
-                placeholder="••••••••"
+                placeholder="New Password"
                 value={passwordData.newPassword}
                 onChange={(e) =>
                   setPasswordData({
@@ -490,11 +488,10 @@ export default function Settings() {
               )}
             </div>
             <div>
-              <label style={labelStyle}>Confirm New Password</label>
               <input
                 type="password"
                 style={inputStyle}
-                placeholder="••••••••"
+                placeholder="Confirm New Password"
                 value={passwordData.confirmPassword}
                 onChange={(e) =>
                   setPasswordData({
@@ -640,7 +637,7 @@ export default function Settings() {
             <p
               style={{ fontWeight: 700, fontSize: "0.85rem", marginBottom: 5 }}
             >
-              Terminate Master Account
+              Terminate Admin Account
             </p>
             <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>
               Warning: This action is permanent. All industrial intelligence and

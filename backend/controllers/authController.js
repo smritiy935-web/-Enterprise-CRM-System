@@ -24,27 +24,27 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     console.log(`[AUTH] Login Attempt: ${email}`);
 
-    // Master Admin Bypass with Database Persistence
-    if (email === 'master@admin.com' && password === 'supersecret123') {
-      console.log('[AUTH] MASTER BYPASS GRANTED - PERSISTING...');
-      let masterUser = await User.findOne({ email: 'master@admin.com' });
-      if (!masterUser) {
-        masterUser = new User({
-          name: 'Master Admin',
-          email: 'master@admin.com',
-          password: 'supersecret123',
+    // Admin Bypass with Database Persistence
+    if (email === 'admin@apex.com' && password === 'admin123') {
+      console.log('[AUTH] ADMIN BYPASS GRANTED - PERSISTING...');
+      let adminUser = await User.findOne({ email: 'admin@apex.com' });
+      if (!adminUser) {
+        adminUser = new User({
+          name: 'Smriti Yadav',
+          email: 'admin@apex.com',
+          password: 'admin123',
           role: 'Admin'
         });
-        await masterUser.save();
+        await adminUser.save();
       }
-      const token = jwt.sign({ id: masterUser._id, role: 'Admin' }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
-      return res.json({ token, user: { id: masterUser._id, name: masterUser.name, email: masterUser.email, role: masterUser.role } });
+      const token = jwt.sign({ id: adminUser._id, role: 'Admin' }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
+      return res.json({ token, user: { id: adminUser._id, name: adminUser.name, email: adminUser.email, role: adminUser.role } });
     }
     
     const user = await User.findOne({ email });
     if (!user) {
       console.log(`[AUTH] FAILED: User not found - ${email}`);
-      return res.status(400).json({ message: 'User not found. Try master@admin.com' });
+      return res.status(400).json({ message: 'User not found. Try admin@apex.com' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);

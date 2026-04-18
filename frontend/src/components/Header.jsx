@@ -53,46 +53,105 @@ const Header = () => {
       top: 0,
       zIndex: 1000,
       background: 'var(--glass-bg)',
-      backdropFilter: 'blur(10px)',
+      backdropFilter: 'blur(16px)', // Deeper blur
       borderBottom: '1px solid var(--border-color)'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.65rem', fontWeight: 800, letterSpacing: '1px' }}>
-          <span style={{ color: 'var(--text-secondary)' }}>CORE</span>
-          <span style={{ opacity: 0.2 }}>/</span>
-          <span style={{ color: 'var(--accent-primary)' }}>{path}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
+        {/* Advanced Breadcrumbs */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.65rem', fontWeight: 800, letterSpacing: '1.5px' }}>
+          <span style={{ color: 'var(--text-secondary)', opacity: 0.6 }}>APEX</span>
+          <span style={{ color: 'var(--text-secondary)', opacity: 0.3 }}>/</span>
+          <span style={{ color: 'var(--accent-primary)', textShadow: '0 0 10px rgba(99, 102, 241, 0.3)' }}>{path}</span>
         </div>
 
-        <div className="search-bar" style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '6px 12px', borderRadius: '6px', width: '280px', border: '1px solid var(--border-color)' }}>
-          <Search size={14} color="var(--text-secondary)" />
-          <input 
-            type="text" 
-            placeholder="Search Intelligence..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', marginLeft: '8px', outline: 'none', width: '100%', fontSize: '0.75rem' }}
-          />
+        {/* Premium Search Bar */}
+        <div className="search-container" style={{ position: 'relative' }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            background: 'rgba(0,0,0,0.2)', 
+            padding: '7px 14px', 
+            borderRadius: '10px', 
+            width: '320px', 
+            border: '1px solid var(--border-color)',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.02)'
+          }}
+          className="search-input-wrapper"
+          >
+            <Search size={14} color="var(--text-secondary)" />
+            <input 
+              type="text" 
+              placeholder="Search Intelligence Hub (Cmd+K)..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', marginLeft: '10px', outline: 'none', width: '100%', fontSize: '0.75rem', fontWeight: 500 }}
+              onFocus={(e) => e.target.parentElement.style.borderColor = 'var(--accent-primary)'}
+              onBlur={(e) => e.target.parentElement.style.borderColor = 'var(--border-color)'}
+            />
+          </div>
         </div>
       </div>
 
-      <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 10px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.1)' }}>
-           <Activity size={12} color="#10b981" />
-           <span style={{ fontSize: '0.6rem', fontWeight: 800, color: '#10b981', letterSpacing: '0.5px' }}>SYNC ACTIVE</span>
+      <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        {/* Industrial Status Pulse */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '8px', 
+          padding: '5px 12px', 
+          borderRadius: '50px', 
+          background: 'rgba(16, 185, 129, 0.05)', 
+          border: '1px solid rgba(16, 185, 129, 0.15)',
+          position: 'relative'
+        }}>
+           <div className="status-dot-pulse" style={{ 
+             width: '6px', 
+             height: '6px', 
+             background: '#10b981', 
+             borderRadius: '50%',
+             boxShadow: '0 0 8px #10b981',
+             position: 'relative'
+           }}>
+             <div style={{
+               position: 'absolute',
+               top: 0,
+               left: 0,
+               width: '100%',
+               height: '100%',
+               background: '#10b981',
+               borderRadius: '50%',
+               animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+               opacity: 0.75
+             }}></div>
+           </div>
+           <span style={{ fontSize: '0.55rem', fontWeight: 800, color: '#10b981', letterSpacing: '1px' }}>SYSTEM ONLINE</span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <button onClick={toggleTheme} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-            {theme === 'dark' ? <Sun size={17} color="var(--text-secondary)" /> : <Moon size={17} color="var(--text-secondary)" />}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+          <button onClick={toggleTheme} className="hover-trigger" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '5px', borderRadius: '8px', transition: 'background 0.2s' }}>
+            {theme === 'dark' ? <Sun size={17} color="#fbbf24" fill="#fbbf24" /> : <Moon size={17} color="#000" fill="#fbbf24" strokeWidth={1} />}
           </button>
 
           <div style={{ position: 'relative' }}>
             <button 
               onClick={() => { setShowNotifications(!showNotifications); setShowDropdown(false); }}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', display: 'flex' }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', padding: '5px' }}
             >
-              <Bell size={16} color="var(--text-secondary)" />
-              <span style={{ position: 'absolute', top: '-1px', right: '-1px', background: 'var(--accent-primary)', width: '6px', height: '6px', borderRadius: '50%' }}></span>
+              <Bell size={17} color="var(--text-secondary)" />
+              <span style={{ 
+                position: 'absolute', 
+                top: '4px', 
+                right: '4px', 
+                background: '#10b981', 
+                width: '8px', 
+                height: '8px', 
+                borderRadius: '50%', 
+                border: '2px solid var(--bg-primary)',
+                boxShadow: '0 0 10px rgba(16, 185, 129, 0.4)'
+              }}
+              className="notification-pulse"
+              ></span>
             </button>
 
             {showNotifications && (
@@ -115,7 +174,7 @@ const Header = () => {
             >
               <div className="hide-mobile md-block" style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>{user?.name?.split(' ')[0] || 'User'}</div>
-                <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>{user?.role || 'REP'}</div>
+                <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>{user?.role || 'Admin'}</div>
               </div>
               <div style={{ width: '30px', height: '30px', borderRadius: '6px', background: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '0.8rem', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
                 {user?.avatar ? (

@@ -8,9 +8,14 @@ const Analytics = () => {
           <h1 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>Enterprise Analytics</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Deep dive into your sales performance</p>
         </div>
-        <button className="btn" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-          <Download size={18} /> Export Report
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button className="btn btn-mint" style={{ padding: '8px 20px', fontSize: '0.85rem' }}>
+            Sync Data
+          </button>
+          <button className="btn btn-primary" style={{ padding: '8px 20px', fontSize: '0.85rem' }}>
+            <Download size={16} /> Export Report
+          </button>
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>

@@ -16,10 +16,12 @@ import {
 } from "recharts";
 import { TrendingUp, Users, DollarSign, Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const socket = io(API_URL);
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [activities, setActivities] = useState([]);
@@ -238,11 +240,11 @@ const Dashboard = () => {
         }}
       >
         <div>
-          <h1 style={{ fontSize: "1.75rem", marginBottom: "0.5rem" }}>
-            Sales Overview
+          <h1 style={{ fontSize: "1.75rem", marginBottom: "0.25rem" }}>
+            Welcome back, {user?.name || "User"}
           </h1>
-          <p style={{ color: "var(--text-secondary)" }}>
-            Performance metrics for the selected period
+          <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
+            Here's what's happening with your sales pipeline today.
           </p>
         </div>
         <select
