@@ -28,10 +28,15 @@ function AppContent() {
       {user && <Sidebar />}
       <div
         className="main-content"
-        style={{ flex: 1, display: "flex", flexDirection: "column" }}
+        style={{ 
+          flex: 1, 
+          display: "flex", 
+          flexDirection: "column",
+          marginLeft: user ? '200px' : 0 
+        }}
       >
         {user && <Header />}
-        <main style={{ padding: "2rem", flex: 1 }}>
+        <main style={{ padding: "70px 2rem 2rem 2rem", flex: 1 }}>
           <Routes>
             <Route
               path="/login"

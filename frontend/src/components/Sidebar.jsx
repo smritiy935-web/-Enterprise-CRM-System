@@ -65,9 +65,9 @@ const Sidebar = () => {
         borderRadius: 0,
         borderLeft: "none",
         borderTop: "none",
-        borderBottom: "none",
-        position: "sticky",
+        position: "fixed",
         top: 0,
+        left: 0,
         zIndex: 110,
         background: "var(--glass-bg)",
       }}

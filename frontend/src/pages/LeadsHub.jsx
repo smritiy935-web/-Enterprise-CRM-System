@@ -661,6 +661,7 @@ export default function LeadsHub() {
           <form
             className="glass-card animate-fade"
             style={{
+              margin: "auto",
               width: 420,
               padding: "2rem",
               background: "var(--bg-secondary)",

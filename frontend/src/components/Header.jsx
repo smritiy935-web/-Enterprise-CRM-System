@@ -41,6 +41,10 @@ const Header = () => {
 
   return (
     <header className="glass-card" style={{ 
+      position: 'fixed',
+      top: 0,
+      left: 200,
+      width: 'calc(100% - 200px)',
       margin: 0, 
       padding: '0.4rem 1.5rem', 
       display: 'flex', 
@@ -50,8 +54,6 @@ const Header = () => {
       borderTop: 'none',
       borderLeft: 'none',
       borderRight: 'none',
-      position: 'sticky',
-      top: 0,
       zIndex: 1000,
       background: 'var(--glass-bg)',
       backdropFilter: 'blur(16px)', // Deeper blur
