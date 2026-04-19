@@ -50,9 +50,9 @@ mongoose.connect(MONGODB_URI, {
     console.error('[DB] Full error stack:', err.stack);
   });
 
-// Routes
-app.get('/', (req, res) => {
-  res.send('API is running (Apex-CRM-Website)');
+// Root API Check (Moved below or changed to avoid conflict with frontend index.html)
+app.get('/api/health', (req, res) => {
+  res.send('API is healthy (Apex-CRM-Website)');
 });
 
 app.get('/api/status', (req, res) => {
@@ -63,20 +63,24 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-// Serve static assets in production
-const frontendPath = path.join(__dirname, '../frontend/dist');
-app.use(express.static(frontendPath));
-
+// Serving static assets should happen AFTER API routes if we want to be safe, 
+// OR API routes should be defined clearly.
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/leads', require('./routes/leadRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/activities', require('./routes/activityRoutes'));
 
+// Serve static assets in production
+const frontendPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendPath));
+
 // SPA Catch-all: Redirect all non-API requests to the frontend (Fixes 404 on refresh)
 app.get('*', (req, res) => {
-  if (req.originalUrl.startsWith('/api')) {
+  // If request is for an API that doesn't exist, send 404
+  if (req.url.startsWith('/api')) {
     return res.status(404).json({ message: 'API Route Not Found' });
   }
+  // Otherwise, send the index.html
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
