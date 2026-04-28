@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import api, { API_URL } from "../utils/api";
+import api from "../api";
 import { io } from "socket.io-client";
 import {
   AreaChart,
@@ -18,7 +18,7 @@ import { TrendingUp, Users, DollarSign, Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const socket = io(API_URL);
+const socket = io(import.meta.env.VITE_API_URL.replace("/api", ""));
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -31,8 +31,8 @@ const Dashboard = () => {
   const fetchStats = useCallback(async () => {
     try {
       const [res, actRes] = await Promise.all([
-        api.get(`/api/analytics/stats?period=${period}`),
-        api.get('/api/activities')
+        api.get(`/analytics/stats?period=${period}`),
+        api.get('/activities')
       ]);
       
       const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -562,7 +562,7 @@ const Dashboard = () => {
               }}
               onClick={() =>
                 window.open(
-                  `${API_URL}/api/analytics/report`,
+                  `${import.meta.env.VITE_API_URL}/analytics/report`,
                   "_blank",
                 )
               }

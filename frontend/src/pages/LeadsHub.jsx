@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import api, { API_URL } from "../utils/api";
+import api from "../api";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Plus,
@@ -16,7 +16,7 @@ import {
 import { io } from "socket.io-client";
 
 // --- Socket Sync ---
-const socket = io(API_URL);
+const socket = io(import.meta.env.VITE_API_URL.replace("/api", ""));
 
 // --- Theme Config ---
 const STATUS_COLORS = {
@@ -89,7 +89,7 @@ export default function LeadsHub() {
   // --- Real Backend Synchronization ---
   const fetchLeads = useCallback(async () => {
     try {
-      const res = await api.get("/api/leads");
+      const res = await api.get("/leads");
       setLeads(res.data || []);
     } catch (err) {
       setLeads([]);
@@ -135,7 +135,7 @@ export default function LeadsHub() {
     };
 
     try {
-      await api.post("/api/leads", leadData);
+      await api.post("/leads", leadData);
       setShowModal(false);
       showToast(`Lead "${leadData.firstName}" deployed.`);
       fetchLeads();
@@ -147,7 +147,7 @@ export default function LeadsHub() {
   const handleDeleteLead = async (id) => {
     if (!window.confirm("Terminate this lead?")) return;
     try {
-      await api.delete(`/api/leads/${id}`);
+      await api.delete(`/leads/${id}`);
       showToast("Target removed.");
       fetchLeads();
     } catch (err) {
@@ -157,7 +157,7 @@ export default function LeadsHub() {
 
   const handleLogActivity = async (leadId, type, description) => {
     try {
-      await api.post("/api/activities", {
+      await api.post("/activities", {
         leadId,
         type,
         description,

@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Send, X, MessageSquare, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { API_URL } from '../utils/api';
+// const API_URL = import.meta.env.VITE_API_URL;
 
-const socket = window.io ? window.io(API_URL) : { on: () => {}, emit: () => {}, off: () => {} };
+const socket = window.io ? window.io(import.meta.env.VITE_API_URL.replace("/api", "")) : { on: () => {}, emit: () => {}, off: () => {} };
 
 const TeamChat = () => {
   const [isOpen, setIsOpen] = useState(false);

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../utils/api';
+import api from '../api';
 
 const AuthContext = createContext();
 
@@ -8,17 +8,17 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
+    const userInfo = localStorage.getItem('userInfo');
+    if (userInfo) {
       try {
-        let userData = JSON.parse(storedUser);
+        let userData = JSON.parse(userInfo);
         if (userData && userData.name === 'Master Admin') {
           userData.name = 'Smriti Yadav';
         }
         setUser(userData);
       } catch (e) {
-        console.error('Failed to parse stored user', e);
-        localStorage.removeItem('user');
+        console.error('Failed to parse stored userInfo', e);
+        localStorage.removeItem('userInfo');
       }
     }
     setLoading(false);
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await api.post('/api/auth/login', { email, password });
+      const res = await api.post('/auth/login', { email, password });
       
       if (!res.data || !res.data.user) {
         throw new Error('Invalid server response. Please verify your backend connection.');
@@ -36,10 +36,11 @@ export const AuthProvider = ({ children }) => {
       if (userData && userData.name === 'Master Admin') {
         userData.name = 'Smriti Yadav';
       }
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(userData));
-      setUser(userData);
-      return userData;
+      
+      const userInfo = { ...userData, token };
+      localStorage.setItem('userInfo', JSON.stringify(userInfo));
+      setUser(userInfo);
+      return userInfo;
     } catch (err) {
       console.error('Login method error:', err);
       throw err;
@@ -48,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const res = await api.post('/api/auth/register', userData);
+      const res = await api.post('/auth/register', userData);
       if (!res.data || !res.data.user) {
         throw new Error('Registration failed. Invalid response from server.');
       }
@@ -56,10 +57,11 @@ export const AuthProvider = ({ children }) => {
       if (newUser && newUser.name === 'Master Admin') {
         newUser.name = 'Smriti Yadav';
       }
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(newUser));
-      setUser(newUser);
-      return newUser;
+      
+      const userInfo = { ...newUser, token };
+      localStorage.setItem('userInfo', JSON.stringify(userInfo));
+      setUser(userInfo);
+      return userInfo;
     } catch (err) {
       console.error('Register method error:', err);
       throw err;
@@ -67,23 +69,21 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateProfile = async (updates) => {
-    const res = await api.put('/api/auth/profile', updates);
+    const res = await api.put('/auth/profile', updates);
     const updatedUser = { ...user, ...res.data };
-    localStorage.setItem('user', JSON.stringify(updatedUser));
+    localStorage.setItem('userInfo', JSON.stringify(updatedUser));
     setUser(updatedUser);
     return updatedUser;
   };
 
   const updateAvatarState = (newAvatar) => {
     const updatedUser = { ...user, avatar: newAvatar };
-    localStorage.setItem('user', JSON.stringify(updatedUser));
+    localStorage.setItem('userInfo', JSON.stringify(updatedUser));
     setUser(updatedUser);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    api.defaults.headers.common['Authorization'] = '';
+    localStorage.removeItem('userInfo');
     setUser(null);
   };
 

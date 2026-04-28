@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import api from "../utils/api";
+import api from "../api";
 import {
   User,
   Users,
@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { API_URL } from "../utils/api";
+// const API_URL = import.meta.env.VITE_API_URL;
 
 // --- Components ---
 const Toast = ({ message, type, onDone }) => {
@@ -145,7 +145,7 @@ export default function Settings() {
     form.append("avatar", file);
 
     try {
-      const res = await api.post("/api/auth/avatar", form, {
+      const res = await api.post("/auth/avatar", form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       updateAvatarState(res.data.avatar);
@@ -177,7 +177,7 @@ export default function Settings() {
 
     setChangingPass(true);
     try {
-      await api.put("/api/auth/change-password", {
+      await api.put("/auth/change-password", {
         oldPassword: passwordData.oldPassword,
         newPassword: passwordData.newPassword,
       });
@@ -199,7 +199,7 @@ export default function Settings() {
 
   const handleDeleteAccount = async () => {
     try {
-      await api.delete("/api/auth/delete-account");
+      await api.delete("/auth/delete-account");
       logout();
       navigate("/login");
     } catch (err) {
@@ -307,7 +307,7 @@ export default function Settings() {
             >
               {user?.avatar ? (
                 <img
-                  src={user.avatar.startsWith('http') ? user.avatar : `${API_URL}${user.avatar}`}
+                  src={user.avatar.startsWith('http') ? user.avatar : `${import.meta.env.VITE_API_URL.replace('/api', '')}${user.avatar}`}
                   alt="avatar"
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />

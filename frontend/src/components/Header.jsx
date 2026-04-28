@@ -2,7 +2,7 @@ import { Bell, Search, User, LogOut, Settings, Activity, Sun, Moon } from 'lucid
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
-import { API_URL } from '../utils/api';
+// const API_URL = import.meta.env.VITE_API_URL;
 
 import { useSearch } from '../context/SearchContext';
 
@@ -181,7 +181,7 @@ const Header = () => {
               </div>
               <div style={{ width: '30px', height: '30px', borderRadius: '6px', background: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '0.8rem', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
                 {user?.avatar ? (
-                  <img src={user.avatar.startsWith('http') ? user.avatar : `${API_URL}${user.avatar}`} alt="P" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={user.avatar.startsWith('http') ? user.avatar : `${import.meta.env.VITE_API_URL.replace("/api", "")}${user.avatar}`} alt="P" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   user?.name?.charAt(0) || 'U'
                 )}

@@ -40,4 +40,23 @@ const createActivity = async (req, res) => {
   }
 };
 
-module.exports = { getActivities, createActivity };
+const deleteActivity = async (req, res) => {
+  try {
+    const activityId = req.params.id;
+    const deletedActivity = await Activity.findByIdAndDelete(activityId);
+    
+    if (!deletedActivity) {
+      return res.status(404).json({ message: 'Activity not found' });
+    }
+
+    if (req.io) {
+      req.io.emit('activity_deleted', activityId);
+    }
+
+    res.json({ message: 'Activity deleted successfully', id: activityId });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting activity' });
+  }
+};
+
+module.exports = { getActivities, createActivity, deleteActivity };

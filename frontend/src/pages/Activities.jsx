@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api, { API_URL } from "../utils/api";
+import api from "../api";
 import {
   Mail,
   Phone,
@@ -7,10 +7,11 @@ import {
   StickyNote,
   User,
   AlertCircle,
+  Trash2,
 } from "lucide-react";
 import { io } from "socket.io-client";
 
-const socket = io(API_URL);
+const socket = io(import.meta.env.VITE_API_URL.replace("/api", ""));
 
 const Activities = () => {
   const [activities, setActivities] = useState([]);
@@ -24,7 +25,7 @@ const Activities = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const res = await api.get("/api/activities");
+        const res = await api.get("/activities");
         setActivities(res.data);
       } catch (err) {
         console.error("Error fetching activities:", err);
@@ -39,9 +40,27 @@ const Activities = () => {
     socket.on("activity_added", (newAct) => {
       setActivities((prev) => [newAct, ...prev]);
     });
+    
+    socket.on("activity_deleted", (deletedId) => {
+      setActivities((prev) => prev.filter((act) => act._id !== deletedId));
+    });
 
-    return () => socket.off("activity_added");
+    return () => {
+      socket.off("activity_added");
+      socket.off("activity_deleted");
+    };
   }, []);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this activity?")) return;
+    try {
+      await api.delete(`/activities/${id}`);
+      setActivities((prev) => prev.filter((act) => act._id !== id));
+    } catch (err) {
+      console.error("Error deleting activity:", err);
+      alert("Failed to delete activity.");
+    }
+  };
 
   const getIcon = (type) => {
     switch (type) {
@@ -357,6 +376,22 @@ const Activities = () => {
                   {act.lead
                     ? `${act.lead.firstName} ${act.lead.lastName}`
                     : "System"}
+                  <button 
+                    onClick={() => handleDelete(act._id)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#ef4444',
+                      cursor: 'pointer',
+                      padding: '2px',
+                      marginLeft: '10px',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                    title="Delete Activity"
+                  >
+                    <Trash2 size={14} />
+                  </button>
                 </div>
               </div>
 

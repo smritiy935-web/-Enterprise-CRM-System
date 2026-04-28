@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import api from '../utils/api';
+import api from '../api';
 import { Calendar, Link as LinkIcon, Users, ArrowLeft } from 'lucide-react';
 
 export default function Meeting() {
@@ -19,7 +19,7 @@ export default function Meeting() {
     if (preFilledLead) {
       try {
         const formattedDate = new Date(`${date}T${time}`).toLocaleString();
-        await api.post("/api/activities", {
+        await api.post("/activities", {
           leadId: preFilledLead._id, 
           type: "Meeting", 
           description: `Strategy Sync: ${topic} \nLink: ${link} \nTime: ${formattedDate}`, 
