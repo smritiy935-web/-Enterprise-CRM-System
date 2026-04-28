@@ -42,8 +42,9 @@ export const AuthProvider = ({ children }) => {
       setUser(userInfo);
       return userInfo;
     } catch (err) {
-      console.error('Login method error:', err);
-      throw err;
+      const message = err.response?.data?.message || err.message || 'Server Error';
+      console.error('Login method error:', message);
+      throw new Error(message);
     }
   };
 

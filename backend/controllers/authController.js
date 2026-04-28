@@ -61,7 +61,10 @@ const login = async (req, res) => {
     res.json({ token, user: { id: user._id, name: user.name, email, role: user.role } });
   } catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ message: 'Server error' });
+    if (err.name === 'MongooseServerSelectionError' || err.message.includes('ECONNREFUSED')) {
+      return res.status(500).json({ message: 'Database Connection Error. Please check MONGODB_URI in Render settings.' });
+    }
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
@@ -149,7 +152,7 @@ const emergencyAdmin = async (req, res) => {
         <h1 style="color: #10b981;">✅ Admin Recalibrated</h1>
         <p>Database now contains <b>${count}</b> users.</p>
         <p>Try logging in with <b>admin@apex.com</b> / <b>admin123</b></p>
-        <a href="http://localhost:3000/login" style="padding: 10px 20px; background: #6366f1; color: white; text-decoration: none; border-radius: 5px;">Go to CRM Login</a>
+        <p style="color: #6366f1; font-weight: bold;">Return to your live CRM URL to login.</p>
       </div>
     `);
   } catch (err) {
