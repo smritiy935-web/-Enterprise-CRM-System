@@ -43,15 +43,19 @@ io.on('connection', (socket) => {
 
 // Database Connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/enterprise_crm';
-console.log('[DB] Attempting to connect to MongoDB...');
+console.log(`[DB] Attempting to connect to: ${MONGODB_URI.split('@')[1] || 'Localhost'}`);
+
+mongoose.set('bufferCommands', false); // Disable buffering so errors show up immediately
 
 mongoose.connect(MONGODB_URI, {
-  serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+  serverSelectionTimeoutMS: 5000, 
 })
   .then(() => console.log('✅ MongoDB Connected Successfully'))
   .catch(err => {
     console.error('❌ MONGODB CONNECTION ERROR:', err.message);
-    console.error('[DB] Full error stack:', err.stack);
+    if (err.message.includes('IP not whitelisted')) {
+      console.error('[DB] FIX: Go to MongoDB Atlas -> Network Access and add 0.0.0.0/0');
+    }
   });
 
 // Root API Check
